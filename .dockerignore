@@ -1,0 +1,9 @@
+*
+!shortener/
+!entrypoint.sh
+!gunicorn.conf.py
+!Pipfile
+!Pipfile.lock
+!requirements.txt
+!wait-for-it.sh
+**/__pycache__/

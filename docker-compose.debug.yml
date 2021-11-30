@@ -1,0 +1,32 @@
+---
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    image: shortener-web-dev
+    command: python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn shortener.main:app --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app:ro
+    env_file:
+      - ./.env.example
+    environment:
+      - POSTGRES_HOST=db
+      - DEBUG=1
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env.example
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
