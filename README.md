@@ -20,7 +20,7 @@ JSON API сервис для сокращения URL с возможность�
 
     `make setup`
 
-* Start development Web server (with database)
+* Start development Web server (with database and cache)
 
     `make start`
 

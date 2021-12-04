@@ -12,12 +12,14 @@ services:
       - ./.env.example
     environment:
       - POSTGRES_HOST=db
+      - MEMCACHED_HOST=cache
       - DEBUG=1
     ports:
       - "8000:8000"
       - "5678:5678"
     depends_on:
       - db
+      - cache
 
   db:
     image: postgres:13
@@ -27,6 +29,9 @@ services:
       - ./.env.example
     ports:
       - "5432:5432"
+
+  cache:
+    image: memcached:1
 
 volumes:
   postgres_data:

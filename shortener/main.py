@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import RedirectResponse
 
 from . import crud, schemas
-from .database import SessionLocal
+from .database import SessionLocal, cache
 
 BASE_URL = os.environ["SHORTENER_BASE_URL"]
 
@@ -35,6 +35,10 @@ async def redirect_to_docs():
     responses={404: {"description": "ID not found"}}
 )
 def read_short(short_id: str):
+    cached_url = cache.get(short_id)
+    if cached_url:
+        return cached_url
+
     with get_session() as db:
         db_short = crud.get_short(db, base64_id=short_id)
         if db_short is None:
@@ -43,6 +47,7 @@ def read_short(short_id: str):
                 detail="ID not found"
             )
 
+        cache.set(short_id, db_short.url)
         return db_short.url
 
 

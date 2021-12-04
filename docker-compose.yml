@@ -9,8 +9,10 @@ services:
       - ./.env.example
     environment:
       - POSTGRES_HOST=db
+      - MEMCACHED_HOST=cache
     depends_on:
       - db
+      - cache
 
   db:
     image: postgres:13
@@ -18,6 +20,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env.example
+
+  cache:
+    image: memcached:1
 
   nginx:
     image: nginx

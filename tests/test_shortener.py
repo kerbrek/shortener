@@ -24,6 +24,9 @@ def test_create_short(init_db):  # pylint: disable=unused-argument,redefined-out
     response = client.get("/1", allow_redirects=False)
     assert response.status_code == 307
     assert response.headers["location"] == url
+    cached_response = client.get("/1", allow_redirects=False)
+    assert cached_response.status_code == 307
+    assert cached_response.headers["location"] == url
 
     custom_id = "2"
     response = client.post(

@@ -14,43 +14,63 @@ lint:
 
 .PHONY: test # Run tests
 test:
-	@echo Starting db container...
-	docker run -d --rm --name shortener_test_db -p 5433:5432 --env-file ./.env.example postgres:13
+	@echo Starting db and cache containers...
+	docker run -d --rm --name shortener_test_db --env-file ./.env.example -p 5433:5432 postgres:13
+	docker run -d --rm --name shortener_test_cache -p 11211:11211 memcached:1
 	@sleep 1
-	@bash -c "trap 'echo && echo Stopping db container... && docker stop shortener_test_db' EXIT; \
-	echo Initializing database...; \
-	PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 python -m shortener.init_db; \
-	echo Starting tests...; \
-	PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 pytest tests/"
+	@bash -c "trap \
+	            'echo && echo Stopping db and cache containers...; \
+	            docker stop shortener_test_db; \
+	            docker stop shortener_test_cache' \
+	          EXIT; \
+	          echo Initializing database...; \
+	          PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 python -m shortener.init_db; \
+	          echo Starting tests...; \
+	          PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 pytest tests/"
 
 .PHONY: coverage # Run tests with coverage report
 coverage:
-	@echo Starting db container...
-	docker run -d --rm --name shortener_test_db -p 5433:5432 --env-file ./.env.example postgres:13
+	@echo Starting db and cache containers...
+	docker run -d --rm --name shortener_test_db --env-file ./.env.example -p 5433:5432 postgres:13
+	docker run -d --rm --name shortener_test_cache -p 11211:11211 memcached:1
 	@sleep 1
-	@bash -c "trap 'echo && echo Stopping db container... && docker stop shortener_test_db' EXIT; \
-	echo Initializing database...; \
-	PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 python -m shortener.init_db; \
-	echo Starting tests...; \
-	PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 pytest --cov-report term-missing:skip-covered --cov=shortener tests/"
+	@bash -c "trap \
+	            'echo && echo Stopping db and cache containers...; \
+	            docker stop shortener_test_db; \
+	            docker stop shortener_test_cache' \
+	          EXIT; \
+	          echo Initializing database...; \
+	          PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 python -m shortener.init_db; \
+	          echo Starting tests...; \
+	          PIPENV_DOTENV_LOCATION=.env.example pipenv run env POSTGRES_PORT=5433 pytest --cov-report term-missing:skip-covered --cov=shortener tests/"
 
-.PHONY: start # Start development Web server (with database)
+.PHONY: start # Start development Web server (with database and cache)
 start:
-	@echo Starting db container...
-	docker run -d --rm --name shortener_temp_db -p 5432:5432 --env-file ./.env.example postgres:13
+	@echo Starting db and cache containers...
+	docker run -d --rm --name shortener_temp_db --env-file ./.env.example -p 5432:5432 postgres:13
+	docker run -d --rm --name shortener_temp_cache -p 11211:11211 memcached:1
 	@sleep 1
-	@bash -c "trap 'echo && echo Stopping db container... && docker stop shortener_temp_db' EXIT; \
-	echo Initializing database...; \
-	PIPENV_DOTENV_LOCATION=.env.example pipenv run python -m shortener.init_db; \
-	echo Starting application...; \
-	PIPENV_DOTENV_LOCATION=.env.example pipenv run uvicorn shortener.main:app --reload"
+	@bash -c "trap \
+	            'echo && echo Stopping db and cache containers...; \
+	            docker stop shortener_temp_db; \
+	            docker stop shortener_temp_cache' \
+	          EXIT; \
+	          echo Initializing database...; \
+	          PIPENV_DOTENV_LOCATION=.env.example pipenv run python -m shortener.init_db; \
+	          echo Starting application...; \
+	          PIPENV_DOTENV_LOCATION=.env.example pipenv run uvicorn shortener.main:app --reload"
 
-.PHONY: db # Start Postgres container
+.PHONY: db # Start Postgres and memcached containers
 db:
-	@echo Starting db container...
-	docker run -d --rm --name shortener_temp_db -p 5432:5432 --env-file ./.env.example postgres:13
-	@bash -c "trap 'echo && echo Stopping db container... && docker stop shortener_temp_db' EXIT; \
-	echo Press CTRL+C to stop && sleep 1d"
+	@echo Starting db and cache containers...
+	docker run -d --rm --name shortener_temp_db --env-file ./.env.example -p 5432:5432 postgres:13
+	docker run -d --rm --name shortener_temp_cache -p 11211:11211 memcached:1
+	@bash -c "trap \
+	            'echo && echo Stopping db and cache containers...; \
+	            docker stop shortener_temp_db; \
+	            docker stop shortener_temp_cache' \
+	          EXIT; \
+	          echo Press CTRL+C to stop && sleep 1d"
 
 .PHONY: requirements # Generate requirements.txt file
 requirements:
