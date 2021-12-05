@@ -37,7 +37,7 @@ async def redirect_to_docs():
 def read_short(short_id: str):
     cached_url = cache.get(short_id)
     if cached_url:
-        return cached_url
+        return cached_url.decode()
 
     with get_session() as db:
         db_short = crud.get_short(db, base64_id=short_id)
@@ -47,7 +47,7 @@ def read_short(short_id: str):
                 detail="ID not found"
             )
 
-        cache.set(short_id, db_short.url)
+        cache.set(short_id, db_short.url.encode())
         return db_short.url
 
 
