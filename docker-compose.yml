@@ -15,17 +15,17 @@ services:
       - cache
 
   db:
-    image: postgres:13
+    image: postgres:13-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env.example
 
   cache:
-    image: memcached:1
+    image: memcached:1-alpine
 
   nginx:
-    image: nginx
+    image: nginx:1-alpine
     volumes:
       - ./nginx/templates:/etc/nginx/templates
     env_file:

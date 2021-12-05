@@ -15,8 +15,8 @@ lint:
 .PHONY: test # Run tests
 test:
 	@echo Starting db and cache containers...
-	docker run -d --rm --name shortener_test_db --env-file ./.env.example -p 5433:5432 postgres:13
-	docker run -d --rm --name shortener_test_cache -p 11211:11211 memcached:1
+	docker run -d --rm --name shortener_test_db --env-file ./.env.example -p 5433:5432 postgres:13-alpine
+	docker run -d --rm --name shortener_test_cache -p 11211:11211 memcached:1-alpine
 	@sleep 1
 	@bash -c "trap \
 	            'echo && echo Stopping db and cache containers...; \
@@ -31,8 +31,8 @@ test:
 .PHONY: coverage # Run tests with coverage report
 coverage:
 	@echo Starting db and cache containers...
-	docker run -d --rm --name shortener_test_db --env-file ./.env.example -p 5433:5432 postgres:13
-	docker run -d --rm --name shortener_test_cache -p 11211:11211 memcached:1
+	docker run -d --rm --name shortener_test_db --env-file ./.env.example -p 5433:5432 postgres:13-alpine
+	docker run -d --rm --name shortener_test_cache -p 11211:11211 memcached:1-alpine
 	@sleep 1
 	@bash -c "trap \
 	            'echo && echo Stopping db and cache containers...; \
@@ -47,8 +47,8 @@ coverage:
 .PHONY: start # Start development Web server (with database and cache)
 start:
 	@echo Starting db and cache containers...
-	docker run -d --rm --name shortener_temp_db --env-file ./.env.example -p 5432:5432 postgres:13
-	docker run -d --rm --name shortener_temp_cache -p 11211:11211 memcached:1
+	docker run -d --rm --name shortener_temp_db --env-file ./.env.example -p 5432:5432 postgres:13-alpine
+	docker run -d --rm --name shortener_temp_cache -p 11211:11211 memcached:1-alpine
 	@sleep 1
 	@bash -c "trap \
 	            'echo && echo Stopping db and cache containers...; \
@@ -63,8 +63,8 @@ start:
 .PHONY: db # Start Postgres and memcached containers
 db:
 	@echo Starting db and cache containers...
-	docker run -d --rm --name shortener_temp_db --env-file ./.env.example -p 5432:5432 postgres:13
-	docker run -d --rm --name shortener_temp_cache -p 11211:11211 memcached:1
+	docker run -d --rm --name shortener_temp_db --env-file ./.env.example -p 5432:5432 postgres:13-alpine
+	docker run -d --rm --name shortener_temp_cache -p 11211:11211 memcached:1-alpine
 	@bash -c "trap \
 	            'echo && echo Stopping db and cache containers...; \
 	            docker stop shortener_temp_db; \
