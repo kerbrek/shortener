@@ -1,3 +1,7 @@
+# NGINX-LE
+etc/ssl/
+etc/nginx/*.conf
+
 # Visual Studio Code
 .vscode/*
 !.vscode/settings.json
