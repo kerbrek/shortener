@@ -27,7 +27,7 @@ services:
   nginx:
     image: nginx:1-alpine
     volumes:
-      - ./nginx/templates:/etc/nginx/templates
+      - ./etc/nginx/templates:/etc/nginx/templates
     env_file:
       - ./.env.example
     ports:
