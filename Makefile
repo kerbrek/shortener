@@ -100,6 +100,14 @@ up-debug:
 down-debug:
 	docker-compose -f docker-compose.debug.yml down
 
+.PHONY: up-prod
+up-prod:
+	docker-compose -f docker-compose.prod.yml up --build --detach
+
+.PHONY: down-prod
+down-prod:
+	docker-compose -f docker-compose.prod.yml down
+
 ## https://stackoverflow.com/a/45843594/6475258
 .PHONY: help # Print list of targets with descriptions
 help:
