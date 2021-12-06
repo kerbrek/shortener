@@ -40,7 +40,7 @@ services:
 
     volumes:
       - ./etc/ssl:/etc/nginx/ssl
-      ## Ensure to copy 'etc/service-example.conf' to 'etc/nginx/service-shortener.conf' and modify it
+      ## NOTE: Ensure to copy 'etc/service-example.conf' to 'etc/nginx/service-shortener.conf' and modify it
       - ./etc/nginx/service-shortener.conf:/etc/nginx/service.conf
       # - ./etc/service-example.conf:/etc/nginx/service.conf
       # - ./etc/service-example-2.conf:/etc/nginx/service2.conf  # more services, should be service*.conf
@@ -53,7 +53,7 @@ services:
       - "443:443"
 
     env_file:
-      - ./ENV/.env.nginx  # Ensure to set LE_EMAIL and LE_FQDN variables
+      - ./ENV/.env.nginx  # NOTE: Ensure to set LE_EMAIL and LE_FQDN variables
     environment:
       - TZ=UTC
       - LETSENCRYPT=true
