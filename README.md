@@ -1,37 +1,39 @@
+# Shortener
+
 JSON API сервис для сокращения URL с возможностью задавать кастомные ссылки.
-Используется фреймворк _FastAPI_ и база _PostgreSQL_.
+Используется фреймворк _FastAPI_, библиотека _SQLAlchemy_ и база _PostgreSQL_.
 
 Запускается командой `make up` и доступен по адресу <http://127.0.0.1:8000/>.
 
-### Prerequisites
+## Prerequisites
 
-* pipenv
-* make
-* docker
-* docker-compose
+- pipenv
+- make
+- docker
+- docker-compose
 
-### Commands
+## Commands
 
-* Start _Docker Compose_ services
+- Start _Docker Compose_ services
 
-    `make up`
+  `make up`
 
-* Setup a working environment using _Pipenv_
+- Setup a working environment using _Pipenv_
 
-    `make setup`
+  `make setup`
 
-* Start development Web server (with database and cache)
+- Start development Web server (with database and cache)
 
-    `make start`
+  `make start`
 
-* Run tests
+- Run tests
 
-    `make test`
+  `make test`
 
-* Run linter
+- Run linter
 
-    `make lint`
+  `make lint`
 
-* List all available _Make_ commands
+- List all available _Make_ commands
 
-    `make help`
+  `make help`
