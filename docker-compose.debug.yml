@@ -7,7 +7,7 @@ services:
     image: shortener-web-dev
     command: python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn shortener.main:app --host 0.0.0.0 --port 8000
     volumes:
-      - .:/app:ro
+      - .:/app/mount:ro
     env_file:
       - ./.env.example
     environment:

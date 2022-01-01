@@ -1,6 +1,29 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
+#################################################################
+####################### BUILD STAGE #############################
+#################################################################
+FROM python:3.9-slim-bullseye as builder
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    \
+    && python -m pip install --no-cache-dir pipfile-requirements==0.3.0
+
+WORKDIR /app
+
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+
+COPY Pipfile.lock .
+RUN pipfile2req > requirments.txt \
+    && pip install --no-cache-dir -r requirments.txt
+
+#################################################################
+####################### TARGET STAGE ############################
+#################################################################
 FROM python:3.9-slim-bullseye
-EXPOSE 8000
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -8,20 +31,23 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    \
+    && groupadd --system --gid 999 app \
+    && useradd --system --uid 999 --gid app app
+USER app
+
 WORKDIR /app
 
-# Install pip requirements
-COPY Pipfile.lock .
-RUN python -m pip install --no-cache-dir pipfile-requirements && \
-    pipfile2req > requirments.txt && \
-    python -m pip install --no-cache-dir -r requirments.txt
+COPY --chown=app:app --from=builder /app/venv /app/venv
+COPY --chown=app:app . /app
 
-COPY . /app
+ENV PATH="/app/venv/bin:$PATH"
 
-# Creates a non-root user with an explicit UID and adds permission to access the /app folder
-# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+EXPOSE 8000
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
