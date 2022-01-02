@@ -16,9 +16,10 @@ WORKDIR /app
 RUN python -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
-COPY Pipfile.lock .
-RUN pipfile2req > requirments.txt \
-    && pip install --no-cache-dir -r requirments.txt
+COPY Pipfile.lock /tmp/
+RUN pipfile2req /tmp/Pipfile.lock > /tmp/requirments.txt \
+    && pipfile2req --dev /tmp/Pipfile.lock > /tmp/requirments-dev.txt \
+    && pip install --no-cache-dir -r /tmp/requirments.txt
 
 #################################################################
 ####################### TARGET STAGE ############################
