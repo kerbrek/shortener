@@ -41,13 +41,14 @@ RUN apt-get update \
     && useradd --system --uid 999 --gid app app
 USER app
 
-WORKDIR /app/mount
+WORKDIR /app
 
 COPY --chown=app:app --from=builder /app/venv /app/venv
-
-RUN python -m pip install --no-cache-dir debugpy -t /tmp
-
 ENV PATH="/app/venv/bin:$PATH"
+
+RUN pip install --no-cache-dir debugpy -t /tmp
+
+WORKDIR /app/mount
 
 EXPOSE 8000
 

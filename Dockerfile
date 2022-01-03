@@ -44,9 +44,9 @@ USER app
 WORKDIR /app
 
 COPY --chown=app:app --from=builder /app/venv /app/venv
-COPY --chown=app:app . /app
-
 ENV PATH="/app/venv/bin:$PATH"
+
+COPY --chown=app:app . /app
 
 EXPOSE 8000
 
