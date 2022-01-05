@@ -151,6 +151,18 @@ up-debug:
 down-debug:
 	docker-compose -f docker-compose.debug.yml down
 
+.PHONY: prod-prepare-files
+prod-prepare-files:
+	@mkdir -p ENV
+	@echo Copying files...
+	@cp --verbose .env.example ENV/.env.app
+	@cp --verbose .env.example ENV/.env.nginx
+	@cp --verbose etc/service-example.conf etc/nginx/service-shortener.conf
+	@echo Don\'t forget to modify:
+	@echo - etc/nginx/service-shortener.conf
+	@echo - ENV/.env.app
+	@echo - ENV/.env.nginx
+
 .PHONY: prod-pull-build
 prod-pull-build:
 	@echo Pulling docker images...
