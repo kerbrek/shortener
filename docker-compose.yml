@@ -28,8 +28,6 @@ services:
     image: nginx:1-alpine
     volumes:
       - ./etc/nginx/templates:/etc/nginx/templates
-    env_file:
-      - ./.env.example
     ports:
       - "8000:80"
     depends_on:
