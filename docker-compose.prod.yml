@@ -16,10 +16,28 @@ services:
     env_file:
       - ./ENV/.env.app
     environment:
+      # - POSTGRES_HOST=db
       - MEMCACHED_HOST=cache
 
     depends_on:
+      # - db
       - cache
+
+
+  # db:
+  #   image: postgres:13-alpine
+  #   restart: always
+
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "5"
+
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   env_file:
+  #     - ./ENV/.env.db
 
 
   cache:
@@ -65,3 +83,7 @@ services:
 
     depends_on:
       - web
+
+
+# volumes:
+#   postgres_data:
