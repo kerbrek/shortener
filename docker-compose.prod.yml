@@ -15,13 +15,13 @@ services:
 
     env_file:
       - ./ENV/.env.app
-    environment:
+    # environment:
       # - POSTGRES_HOST=db
-      - MEMCACHED_HOST=cache
+      # - MEMCACHED_HOST=cache
 
-    depends_on:
+    # depends_on:
       # - db
-      - cache
+      # - cache
 
 
   # db:
@@ -40,9 +40,9 @@ services:
   #     - ./ENV/.env.db
 
 
-  cache:
-    image: memcached:1-alpine
-    restart: always
+  # cache:
+  #   image: memcached:1-alpine
+  #   restart: always
 
 
   ## NGINX-LE  https://github.com/nginx-le/nginx-le
