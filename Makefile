@@ -158,7 +158,7 @@ prod-prepare-files:
 	@cp --verbose .env.example ENV/.env.app
 	@cp --verbose .env.example ENV/.env.nginx
 	@cp --verbose etc/service-example.conf etc/nginx/service-shortener.conf
-	@echo Don\'t forget to modify:
+	@echo Do not forget to modify:
 	@echo - etc/nginx/service-shortener.conf
 	@echo - ENV/.env.app
 	@echo - ENV/.env.nginx
@@ -166,7 +166,7 @@ prod-prepare-files:
 .PHONY: prod-pull-build
 prod-pull-build:
 	@echo Pulling docker images...
-	docker-compose -f docker-compose.prod.yml pull cache nginx
+	docker-compose -f docker-compose.prod.yml pull nginx
 	@echo Building docker images...
 	docker-compose -f docker-compose.prod.yml build --pull
 
@@ -180,8 +180,15 @@ prod-down:
 	@echo Stopping compose services...
 	docker-compose -f docker-compose.prod.yml down
 
+.PHONY: prod-start
+prod-start: prod-pull-build prod-up
+
 .PHONY: prod-restart
 prod-restart: prod-pull-build prod-down prod-up
+
+.PHONY: prod-logs
+prod-logs:
+	docker-compose -f docker-compose.prod.yml logs --follow --tail=50
 
 .PHONY: help # Print list of targets with descriptions
 help:
