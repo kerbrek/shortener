@@ -33,7 +33,7 @@ engine = create_engine(
     pool_timeout=POOL_TIMEOUT,
     echo=ECHO
 )
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 

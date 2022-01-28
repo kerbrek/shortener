@@ -1,27 +1,15 @@
 import os
-from contextlib import contextmanager
 
 from baseconv import base64
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import RedirectResponse
 
 from . import crud, schemas
-from .database import SessionLocal, cache
+from .database import cache, session
 
 BASE_URL = os.environ["SHORTENER_BASE_URL"]
 
 app = FastAPI(docs_url="/docs.html", redoc_url=None)
-
-
-@contextmanager
-def get_session(*args, **kwargs):
-    # Use context manager instead of Depends mentioned in tutorial,
-    # as it prevents deadlock https://github.com/tiangolo/fastapi/issues/3205
-    session = SessionLocal(*args, **kwargs)
-    try:
-        yield session
-    finally:
-        session.close()
 
 
 @app.get("/", response_class=RedirectResponse)
@@ -39,7 +27,7 @@ def read_short(short_id: str):
     if cached_url:
         return cached_url.decode()
 
-    with get_session() as db:
+    with session() as db:
         db_short = crud.get_short(db, base64_id=short_id)
         if db_short is None:
             raise HTTPException(
@@ -58,7 +46,7 @@ def read_short(short_id: str):
     responses={409: {"description": "ID already exists"}}
 )
 def write_short(short_in: schemas.ShortIn):
-    with get_session() as db:
+    with session() as db:
         if not short_in.custom_id:
             db_short = None
             while db_short is None:
