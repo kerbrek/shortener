@@ -2,14 +2,19 @@
 services:
   web:
     build:
-      context: .
-      dockerfile: ./Dockerfile
-    image: shortener-web
+      context: ./../
+      dockerfile: ./docker/Dockerfile.dev
+    image: shortener-web-dev
+    command: uvicorn shortener.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./../:/app/mount:ro
     env_file:
-      - ./.env.example
+      - ./../.env.example
     environment:
       - POSTGRES_HOST=db
       - MEMCACHED_HOST=cache
+    ports:
+      - "8000:8000"
     depends_on:
       - db
       - cache
@@ -19,19 +24,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - ./.env.example
+      - ./../.env.example
+    ports:
+      - "5432:5432"
 
   cache:
     image: memcached:1-alpine
-
-  nginx:
-    image: nginx:1-alpine
-    volumes:
-      - ./etc/nginx/templates:/etc/nginx/templates
-    ports:
-      - "8000:80"
-    depends_on:
-      - web
 
 volumes:
   postgres_data:
