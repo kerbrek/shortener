@@ -1,0 +1,14 @@
+---
+
+docker_user: "{{ vault_docker_user }}"
+docker_token: "{{ vault_docker_token }}"
+shortener_base_url: "{{ vault_shortener_base_url }}"
+postgres_host: "{{ vault_postgres_host }}"
+postgres_port: 5432
+postgres_password: "{{ vault_postgres_password }}"
+postgres_user: "{{ vault_postgres_user }}"
+postgres_db: "{{ vault_postgres_db }}"
+memcached_host: "{{ vault_memcached_host }}"
+memcached_port: 11211
+le_email: "{{ vault_le_email }}"
+le_domain: "{{ vault_le_domain }}"
