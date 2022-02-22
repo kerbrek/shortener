@@ -51,10 +51,6 @@ stop-prepared-test-containers := echo; \
 test: prepare-test-containers
 	@sleep 1
 	@trap '${stop-prepared-test-containers}' EXIT && \
-		echo Initializing database... && \
-		env PIPENV_DOTENV_LOCATION=.env.example \
-			pipenv run env POSTGRES_PORT=5433 MEMCACHED_PORT=11212 \
-			python -m ${project}.init_db && \
 		echo Starting tests... && \
 		env PIPENV_DOTENV_LOCATION=.env.example \
 			pipenv run env POSTGRES_PORT=5433 MEMCACHED_PORT=11212 \
@@ -64,10 +60,6 @@ test: prepare-test-containers
 coverage: prepare-test-containers
 	@sleep 1
 	@trap '${stop-prepared-test-containers}' EXIT && \
-		echo Initializing database... && \
-		env PIPENV_DOTENV_LOCATION=.env.example \
-			pipenv run env POSTGRES_PORT=5433 MEMCACHED_PORT=11212 \
-			python -m ${project}.init_db && \
 		echo Starting tests... && \
 		env PIPENV_DOTENV_LOCATION=.env.example \
 			pipenv run env POSTGRES_PORT=5433 MEMCACHED_PORT=11212 \
@@ -97,7 +89,7 @@ stop-prepared-temp-containers := echo; \
 	echo Stopping cache container...; \
 	docker stop ${project}_temp_cache
 
-.PHONY: start # Start development Web server (with database and cache)
+.PHONY: start # Start development Web server
 start: prepare-temp-containers
 	@sleep 1
 	@trap '${stop-prepared-temp-containers}' EXIT && \
@@ -108,54 +100,39 @@ start: prepare-temp-containers
 		env PIPENV_DOTENV_LOCATION=.env.example \
 			pipenv run uvicorn ${project}.main:app --reload
 
-.PHONY: db # Start Postgres and Memcached containers
-db: prepare-temp-containers
-	@trap '${stop-prepared-temp-containers}' EXIT && \
-		echo Press CTRL+C to stop && \
-		sleep 1d
-
-.PHONY: app # Start application Web server (without database and cache)
-app:
-	@echo Initializing database...
-	@env PIPENV_DOTENV_LOCATION=.env.example \
-		pipenv run python -m ${project}.init_db
-	@echo Starting application...
-	@env PIPENV_DOTENV_LOCATION=.env.example \
-		pipenv run gunicorn --config ./gunicorn.conf.py ${project}.main:app
-
 .PHONY: requirements # Generate requirements.txt file
 requirements:
 	pipenv lock --requirements > requirements.txt
 
 .PHONY: up # Start Compose services
 up:
-	docker-compose -f docker/docker-compose.yml pull db cache nginx
-	docker-compose -f docker/docker-compose.yml build --pull
-	docker-compose -f docker/docker-compose.yml up
+	docker-compose -p ${project} -f docker/docker-compose.yml pull db cache nginx
+	docker-compose -p ${project} -f docker/docker-compose.yml build --pull
+	docker-compose -p ${project} -f docker/docker-compose.yml up
 
 .PHONY: down # Stop Compose services
 down:
-	docker-compose -f docker/docker-compose.yml down
+	docker-compose -p ${project} -f docker/docker-compose.yml down
 
 .PHONY: up-dev # Start Compose services (development)
 up-dev:
-	docker-compose -f docker/docker-compose.dev.yml pull db cache
-	docker-compose -f docker/docker-compose.dev.yml build --pull
-	docker-compose -f docker/docker-compose.dev.yml up
+	docker-compose -p ${project} -f docker/docker-compose.dev.yml pull db cache
+	docker-compose -p ${project} -f docker/docker-compose.dev.yml build --pull
+	docker-compose -p ${project} -f docker/docker-compose.dev.yml up
 
 .PHONY: down-dev # Stop Compose services (development)
 down-dev:
-	docker-compose -f docker/docker-compose.dev.yml down
+	docker-compose -p ${project} -f docker/docker-compose.dev.yml down
 
 .PHONY: up-debug # Start Compose services (debug)
 up-debug:
-	docker-compose -f docker/docker-compose.debug.yml pull db cache
-	docker-compose -f docker/docker-compose.debug.yml build --pull
-	docker-compose -f docker/docker-compose.debug.yml up
+	docker-compose -p ${project} -f docker/docker-compose.debug.yml pull db cache
+	docker-compose -p ${project} -f docker/docker-compose.debug.yml build --pull
+	docker-compose -p ${project} -f docker/docker-compose.debug.yml up
 
 .PHONY: down-debug # Stop Compose services (debug)
 down-debug:
-	docker-compose -f docker/docker-compose.debug.yml down
+	docker-compose -p ${project} -f docker/docker-compose.debug.yml down
 
 .PHONY: build # Build Docker image
 build:
